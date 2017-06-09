@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gansidui/gotcp"
-	"github.com/gansidui/gotcp/examples/telnet"
+	"github.com/songshusen/gotcp"
+	"github.com/songshusen/gotcp/examples/telnet"
 )
 
 func main() {

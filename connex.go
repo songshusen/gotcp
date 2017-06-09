@@ -10,7 +10,6 @@ import (
 	"sync"
 	"net"
 	"sync/atomic"
-	"github.com/golang/glog"
 )
 
 type ConnExOptions struct {
@@ -143,5 +142,5 @@ func (c *ConnEx) handleLoop(){
 }
 
 func (c *ConnEx) AsyncWritePacket(packet *Packet) (int,error){
-
+	return 0,nil
 }

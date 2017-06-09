@@ -6,7 +6,7 @@ import (
 	"io"
 	"net"
 
-	"github.com/gansidui/gotcp"
+	"github.com/songshusen/gotcp"
 )
 
 type EchoPacket struct {
