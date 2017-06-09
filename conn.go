@@ -10,6 +10,7 @@ import (
 
 // Error type
 var (
+	ErrPrecode   = errors.New("the link precode error")
 	ErrConnClosing   = errors.New("use of closed network connection")
 	ErrWriteBlocking = errors.New("write packet was blocking")
 	ErrReadBlocking  = errors.New("read packet was blocking")
@@ -22,7 +23,7 @@ type Conn struct {
 	extraData         interface{}   // to save extra data
 	closeOnce         sync.Once     // close the conn, once, per instance
 	closeFlag         int32         // close flag
-	closeChan         chan struct{} // close chanel
+	CloseChan         chan struct{} // close chanel
 	packetSendChan    chan Packet   // packet send chanel
 	packetReceiveChan chan Packet   // packeet receive chanel
 }
@@ -46,7 +47,7 @@ func newConn(conn *net.TCPConn, srv *Server) *Conn {
 	return &Conn{
 		srv:               srv,
 		conn:              conn,
-		closeChan:         make(chan struct{}),
+		CloseChan:         make(chan struct{}),
 		packetSendChan:    make(chan Packet, srv.config.PacketSendChanLimit),
 		packetReceiveChan: make(chan Packet, srv.config.PacketReceiveChanLimit),
 	}
@@ -71,7 +72,7 @@ func (c *Conn) GetRawConn() *net.TCPConn {
 func (c *Conn) Close() {
 	c.closeOnce.Do(func() {
 		atomic.StoreInt32(&c.closeFlag, 1)
-		close(c.closeChan)
+		close(c.CloseChan)
 		close(c.packetSendChan)
 		close(c.packetReceiveChan)
 		c.conn.Close()
@@ -110,7 +111,7 @@ func (c *Conn) AsyncWritePacket(p Packet, timeout time.Duration) (err error) {
 		case c.packetSendChan <- p:
 			return nil
 
-		case <-c.closeChan:
+		case <-c.CloseChan:
 			return ErrConnClosing
 
 		case <-time.After(timeout):
@@ -141,7 +142,7 @@ func (c *Conn) readLoop() {
 		case <-c.srv.exitChan:
 			return
 
-		case <-c.closeChan:
+		case <-c.CloseChan:
 			return
 
 		default:
@@ -167,7 +168,7 @@ func (c *Conn) writeLoop() {
 		case <-c.srv.exitChan:
 			return
 
-		case <-c.closeChan:
+		case <-c.CloseChan:
 			return
 
 		case p := <-c.packetSendChan:
@@ -192,7 +193,7 @@ func (c *Conn) handleLoop() {
 		case <-c.srv.exitChan:
 			return
 
-		case <-c.closeChan:
+		case <-c.CloseChan:
 			return
 
 		case p := <-c.packetReceiveChan:
