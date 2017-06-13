@@ -7,5 +7,6 @@ import (
 // all error info defined here
 
 var (
-	ErrClientAddress = errors.New("tcp ")
+	ErrConnExClosed = errors.New("use closed connection ")
+	ErrConnExWriteBlocking = errors.New("Write packet blocked")
 )

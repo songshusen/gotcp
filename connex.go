@@ -9,6 +9,7 @@ package gotcp
 import (
 	"sync"
 	"net"
+	"time"
 	"sync/atomic"
 )
 
@@ -141,6 +142,28 @@ func (c *ConnEx) handleLoop(){
 	}
 }
 
-func (c *ConnEx) AsyncWritePacket(packet *Packet) (int,error){
-	return 0,nil
+func (c *ConnEx) AsyncWritePacket(packet *Packet, timeout time.Duration) error{
+	if(c.IsClosed()){
+		return ErrConnExClosed
+	}
+
+	if timeout = 0{
+		select {
+		case c.packetSendChan <- *packet:
+			return nil
+		case <- c.CloseChan:
+			return ErrConnExClosed
+		default:
+			return ErrConnExWriteBlocking
+		}
+	}else{
+		select {
+		case c.packetSendChan <- *packet:
+			return nil
+		case <- c.CloseChan:
+			return ErrConnExClosed
+		case <-time.After(timeout):
+			return ErrConnExWriteBlocking
+		}
+	}
 }
