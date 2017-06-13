@@ -147,7 +147,7 @@ func (c *ConnEx) AsyncWritePacket(packet *Packet, timeout time.Duration) error{
 		return ErrConnExClosed
 	}
 
-	if timeout = 0{
+	if timeout == 0{
 		select {
 		case c.packetSendChan <- *packet:
 			return nil
