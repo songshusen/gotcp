@@ -142,14 +142,14 @@ func (c *ConnEx) handleLoop(){
 	}
 }
 
-func (c *ConnEx) AsyncWritePacket(packet *Packet, timeout time.Duration) error{
+func (c *ConnEx) AsyncWritePacket(packet Packet, timeout time.Duration) error{
 	if(c.IsClosed()){
 		return ErrConnExClosed
 	}
 
 	if timeout == 0{
 		select {
-		case c.packetSendChan <- *packet:
+		case c.packetSendChan <- packet:
 			return nil
 		case <- c.CloseChan:
 			return ErrConnExClosed
@@ -158,7 +158,7 @@ func (c *ConnEx) AsyncWritePacket(packet *Packet, timeout time.Duration) error{
 		}
 	}else{
 		select {
-		case c.packetSendChan <- *packet:
+		case c.packetSendChan <- packet:
 			return nil
 		case <- c.CloseChan:
 			return ErrConnExClosed
