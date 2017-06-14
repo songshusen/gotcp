@@ -52,7 +52,7 @@ func (c *Client) Start() error{
 	if (err != nil && c.options.ReconnectInterval == 0){
 		return err
 	}
-
+	log.Printf("dial ok\n")
 	for {
 		if((c.conn == nil || c.conn.IsClosed()) && (conn!=nil)){//TODO :条件待思考
 			c.conn = NewConnEx(conn, c.options.Cbs, c.wg, c.options.ConnOptions, c.proto)
