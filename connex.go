@@ -11,6 +11,7 @@ import (
 	"net"
 	"time"
 	"sync/atomic"
+	"log"
 )
 
 type ConnExOptions struct {
