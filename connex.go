@@ -81,6 +81,7 @@ func (c *ConnEx) Run(){
 
 func (c *ConnEx) readLoop(){
 	defer func() {
+		log.Printf("readloop\n")
 		recover()
 		c.Close()
 	}()
@@ -102,6 +103,7 @@ func (c *ConnEx) readLoop(){
 
 func (c *ConnEx) writeLoop(){
 	defer func() {
+		log.Printf("writeLoop\n")
 		recover()
 		c.Close()
 	}()
@@ -123,6 +125,7 @@ func (c *ConnEx) writeLoop(){
 
 func (c *ConnEx) handleLoop(){
 	defer func() {
+		log.Printf("handleLoop\n")
 		recover()
 		c.Close()
 	}()
