@@ -54,6 +54,8 @@ func (c *Client) Start() error{
 	}
 	if(err != nil){
 		log.Printf("dial error : %v\n", err)
+	}else{
+		log.Printf("dial ok : %s\n", conn.RemoteAddr().String())
 	}
 	for {
 		if((c.conn == nil || c.conn.IsClosed()) && (conn!=nil)){//TODO :条件待思考
@@ -75,6 +77,8 @@ func (c *Client) Start() error{
 					conn, err = c.dial()
 					if(err != nil){
 						log.Printf("dial error : %v\n", err)
+					}else{
+						log.Printf("dial ok : %s\n", conn.RemoteAddr().String())
 					}
 				}
 			case <-c.exitCh:
