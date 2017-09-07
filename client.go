@@ -52,7 +52,9 @@ func (c *Client) Start() error{
 	if (err != nil && c.options.ReconnectInterval == 0){
 		return err
 	}
-	log.Printf("dial ok\n")
+	if(err != nil){
+		log.Printf("dial error : %v\n", err)
+	}
 	for {
 		if((c.conn == nil || c.conn.IsClosed()) && (conn!=nil)){//TODO :条件待思考
 			c.conn = NewConnEx(conn, c.options.Cbs, c.wg, c.options.ConnOptions, c.proto)
@@ -64,16 +66,16 @@ func (c *Client) Start() error{
 			//conn = nil
 		}
 		if(c.options.ReconnectInterval == 0){
-			select {
-			case <-c.exitCh:
-				return nil
-			default:
-			}
+			c.wg.Wait()
+			return nil
 		}else{
 			select {
 			case <-time.After(time.Second * time.Duration(c.options.ReconnectInterval)):
 				if(c.conn == nil || c.conn.IsClosed()){
 					conn, err = c.dial()
+					if(err != nil){
+						log.Printf("dial error : %v\n", err)
+					}
 				}
 			case <-c.exitCh:
 				return nil

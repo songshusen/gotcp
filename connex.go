@@ -82,9 +82,9 @@ func (c *ConnEx) Run(){
 
 func (c *ConnEx) readLoop(){
 	defer func() {
-		log.Printf("readloop\n")
 		recover()
 		c.Close()
+		log.Printf("readLoop close\n")
 	}()
 	for {
 		select {
@@ -104,9 +104,9 @@ func (c *ConnEx) readLoop(){
 
 func (c *ConnEx) writeLoop(){
 	defer func() {
-		log.Printf("writeLoop\n")
 		recover()
 		c.Close()
+		log.Printf("writeLoop close\n")
 	}()
 
 	for {
@@ -126,9 +126,9 @@ func (c *ConnEx) writeLoop(){
 
 func (c *ConnEx) handleLoop(){
 	defer func() {
-		log.Printf("handleLoop\n")
 		recover()
 		c.Close()
+		log.Printf("handleLoop close\n")
 	}()
 
 	for {
